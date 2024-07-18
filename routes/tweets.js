@@ -72,7 +72,14 @@ router.get("/", async (req, res) => {
         })
     }
     else {
-        res.json({ result: false, message : "No tweets for this trend"})
+        Tweet.find()
+        .populate('trends')
+        .populate({ path: 'user', select: {'firstname':1, 'nickname':1}})
+        .then((tweets) => {
+            /* const dataTrend = data.filter(data => data.trends)
+            console.log(dataTrend); */
+            res.json({ result: true, tweets })
+        })
     }
 });
 
