@@ -11,6 +11,14 @@ router.post('/', (req, res) =>{
 })
 
 //GET’/’ (trend)  —> {tweets}
+router.get("/", (req, res) => {
+    Tweet.find()
+    .then((data)=>{
+      console.log(data);
+      res.json({result:true})
+    })
+  });
+  
 
 
 

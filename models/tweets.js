@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const trendSchema = mongoose.Schema({
+const tweetSchema = mongoose.Schema({
     user:{ type: mongoose.Schema.Types.ObjectId, ref: 'users' },
     date: Date,
     message: String,
@@ -10,4 +10,6 @@ const trendSchema = mongoose.Schema({
 
 });
 
-const Trend = mongoose.model('Trend', trendSchema);
+const Tweet = mongoose.model('tweets', tweetSchema);
+
+module.exports = Tweet;
