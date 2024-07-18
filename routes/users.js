@@ -40,7 +40,7 @@ router.post('/signup', (req, res) => {
         newUser.save()
           .then((user) => {
             if (user) {
-              res.json({ result: true, user });
+              res.json({ result: true, token:newUser.token });
             }
             else {
               res.json({ result: false, message: "Error create user." });
@@ -49,6 +49,56 @@ router.post('/signup', (req, res) => {
       }
       else {
         res.json({ result: false, message: "User already exists." });
+      }
+    })
+
+});
+
+/* Signin user */
+router.post('/signin', (req, res) => {
+  const { username, password } = req.body;
+
+  User.findOne({ username })
+    .then(data => {
+      if (data && bcrypt.compareSync(password, data.password)) {
+        const token = uid2(32);
+        User.updateOne({ username }, { token })
+          .then((user) => {
+            if (user) {
+              res.json({ result: true, token });
+            }
+            else {
+              res.json({ result: false, message: "Error connection" });
+            }
+          })
+      }
+      else {
+        res.json({ result: false, message: "User does not exist." });
+      }
+    })
+
+});
+
+/* Signin user */
+router.post('/signin', (req, res) => {
+  const { username, password } = req.body;
+
+  User.findOne({ username })
+    .then(data => {
+      if (data && bcrypt.compareSync(password, data.password)) {
+        const token = uid2(32);
+        User.updateOne({ username }, { token })
+          .then((user) => {
+            if (user) {
+              res.json({ result: true, token });
+            }
+            else {
+              res.json({ result: false, message: "Error connection" });
+            }
+          })
+      }
+      else {
+        res.json({ result: false, message: "User does not exist." });
       }
     })
 
