@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const trendSchema = mongoose.Schema({
-    /* user:{ type: mongoose.Schema.Types.ObjectId, ref: 'users' }, */
+    user:{ type: mongoose.Schema.Types.ObjectId, ref: 'users' },
     date: Date,
     message: String,
     nbLike: Number,
