@@ -9,36 +9,28 @@ router.post('/new/:token', async (req, res) => {
     const token = req.params.token;
     const { message, trends } = req.body;
     const trendsID = [];
-    console.log(trends);
 
     //Vérification autorisation user
-    const user = await User.find({ token });
+    const user = await User.findOne({ token });
     if (!user) {
         res.json({ result: false, message: "User not connected." });
         return;
     }
 
-    console.log(user._id);
-
     //Vérification si trend existe sinon création + mémorisation id
-    for await (const element of trends) {
-        const trend = await Trend.find({ name: element });
-        if (trend.length === 0) {
-            const newTrend = await new Trend({ name: element });
-            console.log(element);
-            const dataTrend = await newTrend.save();
-            trendsID.push(dataTrend);
-        }
+    for await (const element of trends.split(',')) {
+        const trend = await Trend.findOne({ name: element.toLowerCase() });
+        (trend) && console.log(trend._id);
+        (trend) && trendsID.push(trend._id);
     }
 
+    //Création nouveau tweet
     const newTweet = await new Tweet({
         message: message,
         user: user._id,
         trends: trendsID,
     });
-
     console.log(newTweet);
-
     newTweet.save()
         .then(data => {
             if (data) {
@@ -51,13 +43,23 @@ router.post('/new/:token', async (req, res) => {
 })
 
 //GET’/’ (trend)  —> {tweets}
-router.get("/", (req, res) => {
-    Tweet.find()
+router.get("/", async (req, res) => {
+    //Vérification si trend existe sinon création + mémorisation id
+    const trend = await Trend.findOne({ name: req.body.trend });
+
+    if (trend) {
+        const trendID = trend._id;
+        Tweet.find({ trends: { $elemMatch : { $eq: trendID } } })
         .populate('trends')
-        .then((data) => {
-            console.log(data);
-            res.json({ result: true })
+        .then((tweets) => {
+            /* const dataTrend = data.filter(data => data.trends)
+            console.log(dataTrend); */
+            res.json({ result: true, tweets })
         })
+    }
+    else {
+        res.json({ result: false, message : "No tweets for this trend"})
+    }
 });
 
 module.exports = router;
