@@ -42,6 +42,19 @@ router.post('/new/:token', async (req, res) => {
         })
 })
 
+//POST’/’ update nblike
+router.post('/addlike', (req, res) => {
+    Tweet.updateOne({ _id : req.body.id },{ $inc:{ nbLike : +1 }})
+          .then((tweet) => {
+            if (tweet) {
+              res.json({ result: true });
+            }
+            else {
+              res.json({ result: false, message: "Error" });
+            }
+          })
+})
+
 //GET’/’ (trend)  —> {tweets}
 router.get("/", async (req, res) => {
     //Vérification si trend existe sinon création + mémorisation id
@@ -51,6 +64,7 @@ router.get("/", async (req, res) => {
         const trendID = trend._id;
         Tweet.find({ trends: { $elemMatch : { $eq: trendID } } })
         .populate('trends')
+        .populate({ path: 'user', select: {'firstname':1, 'nickname':1}})
         .then((tweets) => {
             /* const dataTrend = data.filter(data => data.trends)
             console.log(dataTrend); */
