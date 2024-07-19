@@ -18,7 +18,7 @@ router.post('/new/:token', async (req, res) => {
     }
 
     //Vérification si trend existe sinon création + mémorisation id
-    for await (const element of trends.split(' ')) {
+    for await (const element of trends/* .split(' ') */) {
         const trend = await Trend.findOne({ name: element.toLowerCase() });
         (trend) && console.log(trend._id);
         (trend) && trendsID.push(trend._id);
