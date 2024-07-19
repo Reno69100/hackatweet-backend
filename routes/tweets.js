@@ -55,6 +55,32 @@ router.post('/addlike', (req, res) => {
           })
 })
 
+//POST’/’ update nblike
+router.post('/sublike', (req, res) => {
+    Tweet.updateOne({ _id : req.body.id },{ $inc:{ nbLike : -1 }})
+          .then((tweet) => {
+            if (tweet) {
+              res.json({ result: true });
+            }
+            else {
+              res.json({ result: false, message: "Error" });
+            }
+          })
+})
+
+//DELETE tweet
+router.delete('/', (req, res) => {
+    Tweet.deleteOne({ _id : req.body.id })
+          .then((tweet) => {
+            if (tweet) {
+              res.json({ result: true });
+            }
+            else {
+              res.json({ result: false, message: "Error" });
+            }
+          })
+})
+
 //GET’/’ (trend)  —> {tweets}
 router.get("/", async (req, res) => {
     //Vérification si trend existe sinon création + mémorisation id
@@ -64,7 +90,7 @@ router.get("/", async (req, res) => {
         const trendID = trend._id;
         Tweet.find({ trends: { $elemMatch : { $eq: trendID } } })
         .populate('trends')
-        .populate({ path: 'user', select: {'firstname':1, 'nickname':1}})
+        .populate({ path: 'user', select: {'firstname':1, 'nickname':1 }})
         .then((tweets) => {
             /* const dataTrend = data.filter(data => data.trends)
             console.log(dataTrend); */
